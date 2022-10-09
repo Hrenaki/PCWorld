@@ -1,0 +1,99 @@
+﻿<Window x:Class="Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="768" Width="1366"
+		  MinHeight="720" MinWidth="1200">
+
+	<Window.Resources>
+		<Style x:Key="RoundedButton" x:Name="RoundedButton" TargetType="Button">
+			<Style.Resources>
+				<Style TargetType="Border">
+					<Setter Property="CornerRadius" Value="15"/>
+				</Style>
+			</Style.Resources>
+			<Setter Property="Background" Value="#66FCF1"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="Width" Value="160"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+
+		<Style x:Key="RightRoundedButton" x:Name="RightRoundedButton" TargetType="Button">
+			<Style.Resources>
+				<Style TargetType="Border">
+					<Setter Property="CornerRadius" Value="0, 15, 15, 0"/>
+				</Style>
+			</Style.Resources>
+			<Setter Property="Background" Value="#66FCF1"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+
+		<Style x:Key="LeftRoundedTextBox" x:Name="LeftRoundedTextBox" TargetType="TextBox">
+			<Style.Resources>
+				<Style TargetType="Border">
+					<Setter Property="CornerRadius" Value="15, 0, 0, 15"/>
+				</Style>
+			</Style.Resources>
+			<Setter Property="FontSize" Value="32"/>
+			<Setter Property="Height" Value="40"/>
+			<Setter Property="BorderBrush" Value="#66FCF1"/>
+			<Setter Property="BorderThickness" Value="3"/>
+		</Style>
+	</Window.Resources>
+
+	<Grid Background="#0B0C10">
+		<Border HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch" 
+              Background="#1F2833" 
+              CornerRadius="0, 0, 50, 50" 
+              Margin="20, 0, 20, 20">
+			<Grid Margin="20, 0, 20, 20">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*" MaxHeight="75" MinHeight="30"/>
+					<RowDefinition Height="6*"/>
+				</Grid.RowDefinitions>
+
+				<Border Grid.Row="0" MaxHeight="100" MinHeight="40" Background="#C5C6C7" CornerRadius="0, 0, 25, 25">
+					<Grid Margin="10, 10, 10, 10">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="1*"/>
+							<ColumnDefinition Width="4*"/>
+							<ColumnDefinition Width="1*"/>
+						</Grid.ColumnDefinitions>
+
+						<Button Style="{DynamicResource RoundedButton}" Margin="10, 0, 10, 0" Content="Catalog" Grid.Column="0"/>
+
+						<Grid Grid.Column="1" Margin="5, 0, 5, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="6*"/>
+								<ColumnDefinition Width="1*"/>
+							</Grid.ColumnDefinitions>
+							<TextBox FontSize="30" FontFamily="Aria" VerticalAlignment="Center" Padding="5, 0, 0, 0" Background="#C5C6C7" Style="{DynamicResource LeftRoundedTextBox}"/>
+							<Button Style="{DynamicResource RightRoundedButton}" Content="Search" Grid.Column="1"/>
+						</Grid>
+
+						<Button Style="{DynamicResource RoundedButton}" Content="Account" Grid.Column="2"/>
+					</Grid>
+				</Border>
+
+				<Grid Grid.Row="1" Margin="10, 20, 5, 0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*"/>
+						<ColumnDefinition Width="4*"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+
+					<Border Grid.Column="0" Width="160" Background="#45A29E" CornerRadius="15">
+					</Border>
+
+					<Border Grid.Column="1" Background="#45A29E" CornerRadius="15" Margin="5, 0, 5, 0">
+					</Border>
+				</Grid>
+			</Grid>
+		</Border>
+	</Grid>
+</Window>
