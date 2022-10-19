@@ -1,12 +1,12 @@
 ﻿using Core.SearchZone;
-using Data;
+using Data.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace HTTPAPI.Controllers
 {
-   [Route("/products")]
+    [Route("/products")]
    public class ProductController : Controller
    {
       private readonly MainDbContext dbcontext;

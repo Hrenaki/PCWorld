@@ -1,41 +1,38 @@
-﻿using Data;
+﻿using Core.Configuration;
+using Data;
+using Data.Common;
+using Data.EntityFramework;
+using Data.Mongodb;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace Core.UserZone
 {
    public interface IUserService
    {
-      public bool TryAddUser(string username, string passwordHash, string email, out User? user);
-      public bool TryGetUserByName(string username, out User? user);
-      public bool TryUpdateUser(User oldUser, User newUser);
+      public bool TryAddUser(string username, string passwordHash, string email, out UserEntity? userEntity, string userRole = "customer");
+      public bool TryGetUserByName(string username, out UserEntity? userEntity);
+      public bool TryUpdateUser(UserEntity oldUserEntity, UserEntity newUserEntity);
       public bool TryDeleteUser(string username);
    }
 
-   public static class UserServiceFactory
-   {
-      public static IUserService CreateDefault(MainDbContext dbContext, IBasketService basketService)
-      {
-         return new UserService(dbContext, basketService);
-      }
-   }
-
-   internal class UserService : IUserService
+   internal class EfUserService : IUserService
    {
       private readonly MainDbContext dbContext;
-      private readonly IBasketService basketService;
 
-      public UserService(MainDbContext dbContext, IBasketService basketService)
+      public EfUserService(MainDbContext dbContext)
       {
          this.dbContext = dbContext;
-         this.basketService = basketService;
       }
 
       public bool TryAddUser(string username,
                              string passwordHash,
                              string email,
-                             out User? user)
+                             out UserEntity? userEntity, 
+                             string userRole = "customer")
       {
-         user = null;
+         userEntity = null;
 
          using (var transaction = dbContext.Database.BeginTransaction())
          {
@@ -44,23 +41,20 @@ namespace Core.UserZone
                if (dbContext.Users.Any(u => u.Name == username))
                   return false;
 
-               var userEntity = new UserEntity()
+               userEntity = new EfUserEntity()
                {
                   Name = username,
                   PasswordHash = passwordHash,
                   Email = email,
-                  UserRole = dbContext.UserRoles.First(role => role.Name == UserRole.Customer.ToString())
+                  UserRoleEntity = dbContext.UserRoles.First(role => role.Name == "customer")
                };
 
-               dbContext.Users.Add(userEntity);
+               dbContext.Users.Add((userEntity as EfUserEntity)!);
                dbContext.SaveChanges();
-
-               user = new User(userEntity, basketService);
-               FillUserBasket(user);
 
                transaction.Commit();
             }
-            catch(Exception)
+            catch (Exception)
             {
                transaction.Rollback();
                return false;
@@ -71,23 +65,14 @@ namespace Core.UserZone
       }
 
       // Returns User from DB with inputted username if exists
-      public bool TryGetUserByName(string username, out User? user)
+      public bool TryGetUserByName(string username, out UserEntity? userEntity)
       {
-         var userEntity = dbContext.Users.Include(u => u.UserRole).FirstOrDefault(u => u.Name == username);
-         
-         if (userEntity == null)
-         {
-            user = null;
-            return false;
-         }
-
-         user = new User(userEntity, basketService);
-         FillUserBasket(user);
-         return true;
+         userEntity = dbContext.Users.Include(u => u.UserRoleEntity).FirstOrDefault(u => u.Name == username);
+         return userEntity != null;
       }
 
       // Returns 'true' if replacement is successful, else 'false'
-      public bool TryUpdateUser(User oldUser, User newUser)
+      public bool TryUpdateUser(UserEntity oldUserEntity, UserEntity newUserEntity)
       {
          return false;
       }
@@ -114,16 +99,83 @@ namespace Core.UserZone
 
          return true;
       }
+   }
 
-      private void FillUserBasket(User user)
+   internal class MongoUserService : IUserService
+   {
+      private IMongoCollection<MongoUserEntity> users;
+      private IUserRoleService userRoleService;
+
+      public MongoUserService(MongoClient mongoClient, 
+                              IOptions<MongoDBSettings> settings, 
+                              IUserRoleService userRoleService)
       {
-         int userId = user.Entity.Id;
-         var basketItems = dbContext.UserProducts.Where(bItem => bItem.UserId == userId)
-                                                 .Include(bItem => bItem.Product)
-                                                   .ThenInclude(p => p.Category)
-                                                 .Include(bItem => bItem.User)
-                                                 .Select(bItem => new BasketItem(bItem));
-         user.Basket.Fill(basketItems);
+         ArgumentNullException.ThrowIfNull(mongoClient, nameof(mongoClient));
+         ArgumentNullException.ThrowIfNull(settings, nameof(settings));
+         ArgumentNullException.ThrowIfNull(userRoleService, nameof(userRoleService));
+
+         IMongoDatabase database = mongoClient.GetDatabase(settings.Value.DatabaseName) ??
+            throw new ArgumentNullException(settings.Value.DatabaseName);
+
+         users = database.GetCollection<MongoUserEntity>(settings.Value.UserCollectionName) ??
+            throw new ArgumentNullException(settings.Value.UserCollectionName);
+
+         this.userRoleService = userRoleService;
+      }
+
+      public bool TryAddUser(string username, string passwordHash, string email, 
+                             out UserEntity? userEntity, string userRole = "customer")
+      {
+         userEntity = null;
+
+         try
+         {
+            var userRoleEntity = userRoleService.GetUserRole(userRole);
+            if (userRoleEntity == null)
+               return false;
+
+            var mongoUserEntity = new MongoUserEntity()
+            {
+               Name = username,
+               PasswordHash = passwordHash,
+               Email = email,
+               UserRoleEntity = userRoleEntity
+            };
+
+            users.InsertOne(mongoUserEntity);
+
+            userEntity = mongoUserEntity;
+            return true;
+         }
+         catch(Exception)
+         {
+            userEntity = null;
+            return false;
+         }
+      }
+
+      public bool TryDeleteUser(string username)
+      {
+         try
+         {
+            users.FindOneAndDelete(u => u.Name == username);
+            return true;
+         }
+         catch(Exception)
+         {
+            return false;
+         }
+      }
+
+      public bool TryGetUserByName(string username, out UserEntity? userEntity)
+      {
+         userEntity = users.Find(u => u.Name == username).FirstOrDefault();
+         return userEntity != null;
+      }
+
+      public bool TryUpdateUser(UserEntity oldUserEntity, UserEntity newUserEntity)
+      {
+         throw new NotImplementedException();
       }
    }
 }

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Desktop", "Desktop\Desktop.csproj", "{4AEB15C4-1A66-4D1F-9085-1957E5131110}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPAPI", "HTTPAPI\HTTPAPI.csproj", "{626D4715-EE59-43E2-A8B8-CC6268832D55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTTPAPI", "HTTPAPI\HTTPAPI.csproj", "{626D4715-EE59-43E2-A8B8-CC6268832D55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

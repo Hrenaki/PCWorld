@@ -2,8 +2,8 @@ using Autofac;
 using HTTPAPI;
 using Core.Configuration;
 using Autofac.Extensions.DependencyInjection;
-using Data;
 using Microsoft.EntityFrameworkCore;
+using Data.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 

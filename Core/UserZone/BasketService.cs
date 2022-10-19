@@ -1,4 +1,7 @@
-﻿using Data;
+﻿using Core.Exceptions;
+using Data.Common;
+using Data.EntityFramework;
+using Data.EntityFramework.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,49 +12,42 @@ namespace Core.UserZone
 {
    public interface IBasketService
    {
-      public BasketItemEntity? AddProduct(UserEntity user, ProductEntity product, int quantity);
+      public void AddProduct(UserEntity user, ProductEntity product, int quantity);
       public void RemoveProduct(UserEntity user, BasketItemEntity basketItem);
       public IEnumerable<BasketItemEntity> GetBasketItems(UserEntity user);
    }
 
-   public static class BasketServiceFactory
-   {
-      public static IBasketService CreateDefault(MainDbContext dbContext)
-      {
-         return new BasketService(dbContext);
-      }
-   }
-
-   internal class BasketService : IBasketService
+   internal class EfBasketService : IBasketService
    {
       private readonly MainDbContext dbContext;
 
-      public BasketService(MainDbContext dbContext)
+      public EfBasketService(MainDbContext dbContext)
       {
          this.dbContext = dbContext;
       }
 
-      public BasketItemEntity? AddProduct(UserEntity user, ProductEntity product, int quantity)
+      public void AddProduct(UserEntity user, ProductEntity product, int quantity)
       {
-         using(var transaction = dbContext.Database.BeginTransaction())
+         var userEntity = ConvertEntity<UserEntity, EfUserEntity>(user);
+         var productEntity = ConvertEntity<ProductEntity, EfProductEntity>(product);
+
+         using (var transaction = dbContext.Database.BeginTransaction())
          {
             try
             {
-               var userProduct = dbContext.UserProducts.FirstOrDefault(up => up.UserId == user.Id && up.ProductId == product.Id);
-               if(userProduct != null)
+               var userProduct = dbContext.UserProducts.FirstOrDefault(up => up.UserId == userEntity.Id && up.ProductId == productEntity.Id);
+               if (userProduct != null)
                {
                   userProduct.Quantity += quantity;
 
                   dbContext.SaveChanges();
                   transaction.Commit();
-
-                  return userProduct;
                }
 
-               userProduct = new BasketItemEntity()
+               userProduct = new EfBasketItemEntity()
                {
-                  UserId = user.Id,
-                  ProductId = product.Id,
+                  UserId = userEntity.Id,
+                  ProductId = productEntity.Id,
                   Quantity = quantity,
                   User = user,
                   Product = product
@@ -60,40 +56,47 @@ namespace Core.UserZone
                dbContext.UserProducts.Add(userProduct);
                dbContext.SaveChanges();
                transaction.Commit();
-
-               return userProduct;
             }
-            catch(Exception)
+            catch (Exception)
             {
                transaction.Rollback();
-               return null;
             }
          }
       }
 
       public IEnumerable<BasketItemEntity> GetBasketItems(UserEntity user)
       {
-         return dbContext.UserProducts.Where(up => up.UserId == user.Id);
+         var userEntity = ConvertEntity<UserEntity, EfUserEntity>(user);
+         return dbContext.UserProducts.Where(up => up.UserId == userEntity.Id);
       }
 
       public void RemoveProduct(UserEntity user, BasketItemEntity basketItem)
       {
-         if (user.Id != basketItem.UserId)
+         var userEntity = ConvertEntity<UserEntity, EfUserEntity>(user);
+         var basketItemEntity = ConvertEntity<BasketItemEntity, EfBasketItemEntity>(basketItem);
+
+         if (userEntity.Id != basketItemEntity.UserId)
             return;
 
-         using(var transaction = dbContext.Database.BeginTransaction())
+         using (var transaction = dbContext.Database.BeginTransaction())
          {
             try
             {
-               dbContext.UserProducts.Remove(basketItem);
+               dbContext.UserProducts.Remove(basketItemEntity);
                dbContext.SaveChanges();
                transaction.Commit();
             }
-            catch(Exception)
+            catch (Exception)
             {
                transaction.Rollback();
             }
          }
+      }
+
+      private TDest ConvertEntity<TSource, TDest>(TSource entity) where TSource : class where TDest : class
+      {
+         return entity as TDest ?? 
+            throw new EntityWrongTypeException(nameof(TSource), nameof(TDest));
       }
    }
 }

@@ -1,5 +1,4 @@
 ﻿using Core.UserZone;
-using Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Core.Configuration;
+using Data.EntityFramework;
 
 namespace Console.Configuration
 {
-   internal sealed class PCWorldContext : MainDbContext
+    internal sealed class PCWorldContext : MainDbContext
    {
       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
       {

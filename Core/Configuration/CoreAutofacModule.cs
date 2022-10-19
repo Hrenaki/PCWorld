@@ -15,10 +15,9 @@ namespace Core.Configuration
       protected override void Load(ContainerBuilder builder)
       {
          builder.RegisterType<HashService>().As<IHashService>().SingleInstance();
-         builder.RegisterType<UserService>().As<IUserService>();
+         builder.RegisterType<MongoUserService>().As<IUserService>();
+         builder.RegisterType<MongoUserRoleService>().As<IUserRoleService>();
          builder.RegisterType<UserAuthenticationService>().As<IUserAuthenticationService>();
-         builder.RegisterType<BasketService>().As<IBasketService>();
-         builder.RegisterType<OrderService>().As<IOrderService>();
       }
    }
 }

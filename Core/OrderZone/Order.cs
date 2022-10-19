@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Data;
 using Core.UserZone;
+using Data.EntityFramework;
 
 namespace Core.OrderZone
 {
-	public enum OrderStatus
+    public enum OrderStatus
 	{
 		Created,
 		Paid,
@@ -23,17 +23,17 @@ namespace Core.OrderZone
 
 		public OrderStatus Status => Enum.Parse<OrderStatus>(Entity.Status.Name);
 
-		internal OrderEntity Entity { get; set; }
+		internal EfOrderEntity Entity { get; set; }
 
       private List<OrderProduct> products = new List<OrderProduct>();
 		public IReadOnlyCollection<OrderProduct> Items => products.AsReadOnly();
 
-      public Order(OrderEntity entity)
+      public Order(EfOrderEntity entity)
 		{
 			Entity = entity;
 		}
 
-		internal Order(OrderEntity entity, IEnumerable<OrderProduct> items)
+		internal Order(EfOrderEntity entity, IEnumerable<OrderProduct> items)
 		{
 			Entity = entity;
 			products.AddRange(items);
@@ -42,12 +42,12 @@ namespace Core.OrderZone
 
 	public class OrderProduct
 	{
-		internal OrderProductEntity Entity { get; init; }
+		internal EfOrderProductEntity Entity { get; init; }
 
 		public string ProductName => Entity.Product.Name;
 		public int Quantity => Entity.Quantity;
 
-		public OrderProduct(OrderProductEntity entity)
+		public OrderProduct(EfOrderProductEntity entity)
 		{
 			Entity = entity;
 		}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Data;
+using Data.Common;
 
 namespace Core.UserZone
 {
@@ -15,16 +16,8 @@ namespace Core.UserZone
 
 	public interface IUserAuthenticationService
 	{
-		public Result TryRegister(string username, string password, string email, out User? user);
-      public Result TrySignIn(string username, string password, out User? user);
-	}
-
-	public static class UserAuthenticationServiceFactory
-	{
-		public static IUserAuthenticationService CreateDefault(IHashService hashService, IUserService userService)
-		{
-			return new UserAuthenticationService(hashService, userService);
-		}
+		public Result TryRegister(string username, string password, string email, out UserEntity? userEntity);
+      public Result TrySignIn(string username, string password, out UserEntity? userEntity);
 	}
 
 	internal class UserAuthenticationService : IUserAuthenticationService
@@ -42,26 +35,26 @@ namespace Core.UserZone
 			this.userService = userService;
 		}
 
-		public Result TryRegister(string username, string password, string email, out User? user)
+		public Result TryRegister(string username, string password, string email, out UserEntity? userEntity)
 		{
-			user = null;
+         userEntity = null;
 
 			bool isUserExist = userService.TryGetUserByName(username, out _);
 			if (isUserExist)
 				return new Result() { Successful = false, Message = UserExistsMessage };
 
-			if (!userService.TryAddUser(username, hashService.GetStringHash(password, username), email, out user))
+			if (!userService.TryAddUser(username, hashService.GetStringHash(password, username), email, out userEntity))
 				return new Result() { Successful = false, Message = "Can't register user" };
 
 			return new Result() { Successful = true, Message = "Registered" };
 		}
 
-		public Result TrySignIn(string username, string password, out User? user)
+		public Result TrySignIn(string username, string password, out UserEntity? userEntity)
 		{
-         if (!userService.TryGetUserByName(username, out user))
+         if (!userService.TryGetUserByName(username, out userEntity))
             return new Result() { Successful = false, Message = string.Format(NotFoundUserMessageFormat, username) };
 
-         bool isPasswordValid = hashService.GetStringHash(password, username) == user!.PasswordHash;
+         bool isPasswordValid = hashService.GetStringHash(password, username) == userEntity!.PasswordHash;
          if (!isPasswordValid)
             return new Result() { Successful = false, Message = UserPasswordNotValidMessage };
 

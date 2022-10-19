@@ -1,0 +1,49 @@
+﻿@model Web.ViewModels.RegisterUserModel
+
+<div class="modal-content">
+	<div class="modal-header">
+		<h1 class="modal-title fs-5" id="exampleModalLabel">Sign in</h1>
+	</div>
+	<div class="modal-body">
+      <form id="register-form" asp-action="RegisterAction" asp-controller="Account" asp-anti-forgery="true">
+         <div id="register-validationSummary" class="validation" asp-validation-summary="ModelOnly"></div>
+         <div class="mb-3 row justify-content-center">
+				<label asp-for="Username" class="col-sm-4 col-form-label">Username</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="Username" />
+					<span asp-validation-for="Username" class="text-danger"></span>
+				</div>
+			</div>
+         <div class="mb-3 row justify-content-center">
+            <label asp-for="Email" class="col-sm-4 col-form-label">Email</label>
+            <div class="col-sm-5">
+               <input type="email" class="form-control" asp-for="Email" />
+               <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+         </div>
+         <div class="mb-3 row justify-content-center">
+            <label asp-for="Password" class="col-sm-4 col-form-label">Password</label>
+            <div class="col-sm-5">
+               <input type="password" class="form-control" asp-for="Password" />
+               <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+         </div>
+         <div class="mb-1 row justify-content-center">
+            <label asp-for="RepeatedPassword" class="col-sm-4 col-form-label">Repeate password</label>
+            <div class="col-sm-5">
+               <input type="password" class="form-control" asp-for="RepeatedPassword" />
+               <span asp-validation-for="RepeatedPassword" class="text-danger"></span>
+            </div>
+         </div>
+      </form>
+	</div>
+	<div class="modal-footer">
+      <input id="submit-register-form-btn" type="submit" value="Sign out" class="btn btn-primary" />
+	</div>
+</div>
+
+<script>
+	listObj = $('#register-validationSummary').find('ul');
+	listObj.addClass("list-group list-group-flush");
+	listObj.children('li').addClass("list-group-item text-danger");
+</script>

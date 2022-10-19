@@ -19,10 +19,7 @@ namespace Core.Configuration
       public override void OnBuild(ConfigurationBuilder builder)
       {
          builder.Add<IHashService, HashService>()
-                .Add<IUserService, UserService>()
-                .Add<IBasketService, BasketService>()
-                .Add<IProductService, ProductService>()
-                .Add<IOrderService, OrderService>()
+                .Add<IUserService, MongoUserService>()
                 .Add<IUserAuthenticationService, UserAuthenticationService>();
       }
    }

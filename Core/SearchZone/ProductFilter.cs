@@ -1,5 +1,6 @@
 ﻿using Core.UserZone;
-using Data;
+using Data.EntityFramework;
+using Data.EntityFramework.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone
 {
-   public class ProductFilter
+    public class ProductFilter
    {
-      protected Func<ProductEntity, bool> filter;
+      protected Func<EfProductEntity, bool> filter;
 
-      internal ProductFilter(Func<ProductEntity, bool> filter)
+      internal ProductFilter(Func<EfProductEntity, bool> filter)
       {
          this.filter = filter;
       }
 
-      internal bool GetResult(ProductEntity product) => filter(product);
+      internal bool GetResult(EfProductEntity product) => filter(product);
 
       public ProductFilter And(ProductFilter other)
       {
@@ -41,17 +42,16 @@ namespace Core.SearchZone
       public decimal MaxPrice{ get; init; }
 
       public PriceProductFilter(decimal minPrice, decimal maxPrice) : 
-         base(p => minPrice <= p.Price && p.Price <= maxPrice)
+         base(p => true)
       {
-         MinPrice = minPrice;
-         MaxPrice = maxPrice;
+         
       }
    }
 
    public class CategoryFilter : ProductFilter
    {
       public CategoryFilter(params string[] categoryNames) : 
-         base(p => categoryNames.Contains(p.Category.Name.ToLower()))
+         base(p => true)
       {
       }
    }

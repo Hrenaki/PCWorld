@@ -1,0 +1,38 @@
+﻿@model Web.ViewModels.LoginUserModel
+
+<div class="modal-content">
+	<div class="modal-header">
+		<h1 class="modal-title fs-5" id="exampleModalLabel">Sign in</h1>
+	</div>
+	<div class="modal-body">
+		<form id="signin-form" asp-action="loginAction" asp-controller="Account" asp-anti-forgery="true">
+			<div id="signin-validationSummary" class="validation" asp-validation-summary="ModelOnly">
+			</div>
+			<input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+			<div class="mb-3 row justify-content-center">
+				<label asp-for="Username" class="col-sm-2 col-form-label">Username</label>
+				<div class="col-sm-5">
+					<input type="text" class="form-control" asp-for="Username" />
+					<span asp-validation-for="Username" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="mb-3 row justify-content-center">
+				<label asp-for="Password" class="col-sm-2 col-form-label">Password</label>
+				<div class="col-sm-5">
+					<input type="password" class="form-control" asp-for="Password" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<input id="submit-signin-form-btn" type="submit" value="Sign in" class="btn btn-primary" />
+		<a id="signin-to-register-btn" class="btn btn-secondary offset-1">Sign out</a>
+	</div>
+</div>
+
+<script>
+	listObj = $('#signin-validationSummary').find('ul');
+	listObj.addClass("list-group list-group-flush");
+	listObj.children('li').addClass("list-group-item text-danger");
+</script>
