@@ -1,0 +1,21 @@
+﻿@model Web.ViewModels.ProductSearchResultModel
+
+<ul class="list-group justify-content-start">
+	@foreach(var product in Model.Products)
+	{
+		<li class="list-group-item rounded-1 m-0 mt-1 mb-1 justify-content-center">
+			<div class="row m-0">
+				<div class="col-md-2">
+					picture
+				</div>
+				<div class="col-md-7">
+					<a href="#" class="text-black" style="text-decoration: none;">@product.Name</a>
+				</div>
+				<div class="col-md-3 justify-content-center">
+					<div class="text-start">Starts from @product.MinPrice$</div>
+					<div class="text-start"><a href="#">@product.ShopCount offers</a></div>
+				</div>
+			</div>
+		</li>
+	}
+</ul>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data.Mongodb.Serializers
 {
-   internal class MongoShopEntitySerializer : SerializerBase<ShopEntity>
+   public class MongoShopEntitySerializer : SerializerBase<ShopEntity>
    {
       public override ShopEntity Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
       {
