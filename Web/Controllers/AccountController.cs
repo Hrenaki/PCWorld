@@ -2,6 +2,7 @@
 using Data.Common;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Web.ViewModels;
@@ -28,6 +29,13 @@ namespace Web.Controllers
       public IActionResult Register()
       {
          return PartialView();
+      }
+
+      [Authorize]
+      [HttpGet("logoutAction")]
+      public async Task LogoutAction()
+      {
+         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
       }
 
       [HttpPost("loginAction")]

@@ -1,0 +1,22 @@
+﻿<ul class="dropdown-menu dropdown-menu-dark">
+	<li><a class="dropdown-item" id="account-btn">Account</a></li>
+	<li><a class="dropdown-item" id="orders-btn">Orders</a></li>
+	<li><a class="dropdown-item" id="logout-btn">Log out</a></li>
+</ul>
+
+<script>
+	function setLogoutHandler(modal) {
+		 var logoutbtn = "logout-btn";
+		 var logoutUrl = "Account/logoutAction";
+
+		 $('body').on('click', '#' + logoutbtn, function () {
+			$.ajax({
+				url: logoutUrl,
+				type: 'GET',
+				success: function() {
+					location.reload();
+				}
+			})
+		});
+	};
+</script>

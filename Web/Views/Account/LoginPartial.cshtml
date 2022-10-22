@@ -1,0 +1,77 @@
+﻿<ul class="dropdown-menu dropdown-menu-dark">
+	<li><a class="dropdown-item" id="signin-btn">Sign in</a></li>
+	<li><a class="dropdown-item" id="register-btn">Sign out</a></li>
+</ul>
+
+<script>
+	var registerViewUrl = "Account/Register";
+
+	function setLoginHandler(modal) {
+		 var btn = 'signin-btn';
+		 var toregisterbtn = 'signin-to-register-btn';
+		 var formbtn = 'submit-signin-form-btn';
+		 var form = "signin-form";
+
+		 var loginViewUrl = "Account/Login";
+		 var loginActionUrl = "Account/loginAction";
+
+		 setGetFormHandler(modal, btn, loginViewUrl);
+		 setGetFormHandler(modal, toregisterbtn, registerViewUrl);
+
+		 setSubmitFormHandler(modal, formbtn, form, loginActionUrl);
+	};
+
+	function setRegisterHandler(modal) {
+		var btn = 'register-btn';
+		 var formbtn = 'submit-register-form-btn';
+		 var form = "register-form";
+
+		 var actionUrl = "Account/registerAction";
+
+		 setGetFormHandler(modal, btn, registerViewUrl);
+		 setSubmitFormHandler(modal, formbtn, form, actionUrl);
+	};
+
+	function setGetFormHandler(modal, btn, url) {
+		 $('body').on('click', '#' + btn, function () {
+			  var id = this.id;
+
+			  $.ajax({
+					url: url,
+					success: function (data) {
+						 $('#' + modal + " .modal-dialog").html(data);
+						 $('#' + modal).modal('show');
+					}
+			  });
+		 });
+	};
+
+	function setSubmitFormHandler(modal, btn, form, url) {
+		 $('body').on('click', '#' + btn, function () {
+			  var id = this.id;
+			  var data = $('#' + form).serialize();
+			  var sharpmodal = '#' + modal;
+
+			  $.ajax({
+					url: url,
+					type: "POST",
+					data: data,
+					success: function (data) {
+						 $(sharpmodal + " .modal-dialog").html(data);
+						 var isValid = $('[name=IsValid]').val() == 'True';
+
+						 if(isValid)
+						 {
+							  $(sharpmodal).modal('hide');
+							  location.reload();
+						 }
+						 else
+						 {
+							  $(sharpmodal).modal('show');
+						 }
+						 
+					}
+			  });
+		 });
+	};
+</script>
