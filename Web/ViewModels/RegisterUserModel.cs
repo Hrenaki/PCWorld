@@ -8,7 +8,7 @@ namespace Web.ViewModels
       public string Username { get; set; }
 
       [Required(ErrorMessage = $"{nameof(Email)} isn't set")]
-      [DataType(DataType.EmailAddress)]
+      [EmailAddress]
       public string Email { get; set; }
 
       [Required(ErrorMessage = $"{nameof(Password)} isn't set")]
