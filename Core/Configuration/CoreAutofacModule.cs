@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Autofac;
 using Core.OrderZone;
 using Core.SearchZone;
+using Core.SearchZone.Filters;
+using Core.SearchZone.Filters.Parsers;
+using Core.SearchZone.Filters.QueryPipelineBuilders;
 using Core.UserZone;
 using Data.Mongodb.Serializers;
 using MongoDB.Bson.Serialization;
@@ -25,6 +28,9 @@ namespace Core.Configuration
          
          builder.RegisterType<UserAuthenticationService>().As<IUserAuthenticationService>();
 
+         builder.RegisterType<MongoPipelineQueryBuilder>().As<IPipelineQueryBuilder>();
+         builder.RegisterType<MongoProductPriceFilterParser>().As<IProductFilterParser>();
+         builder.RegisterType<MongoProductCategoryFilterParser>().As<IProductFilterParser>();
 
          BsonSerializer.RegisterSerializer(new MongoShopEntitySerializer());
       }
