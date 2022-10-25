@@ -1,5 +1,6 @@
 ﻿using Core.Exceptions;
 using Data.Common;
+using Data.Common.Products;
 using Data.EntityFramework;
 using Data.EntityFramework.Products;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Core.UserZone
 {
-   public interface IBasketService
+    public interface IBasketService
    {
       public void AddProduct(UserEntity user, ProductEntity product, int quantity);
       public void RemoveProduct(UserEntity user, BasketItemEntity basketItem);
