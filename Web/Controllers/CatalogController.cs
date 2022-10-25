@@ -29,7 +29,7 @@ namespace Web.Controllers
       [HttpGet("category/{name:maxlength(20)}")]
       public IActionResult GetProductsByCategory(string name)
       {
-         var pipeLine = new ProductFilterPipeline(new ProductCategoryFilter() { CategoryName = name });
+         var pipeLine = new FilterPipeline<IProductFilter>(new ProductCategoryFilter() { CategoryName = name });
          ProductSearchResultModel rm = new ProductSearchResultModel("",
             productService.GetProducts(pipeLine).Select(pe => new SearchResultModel(pe)).ToList());
          return PartialView("Catalog", rm);

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone.Filters.QueryPipelineBuilders
 {
-   internal class MongoPipelineQueryBuilder : IPipelineQueryBuilder
+   internal class MongoPipelineQueryBuilder<T> : IPipelineQueryBuilder<T> where T :IFilter
    {
-      private IProductFilterParser[] filterParsers;
+      private IFilterParser<T>[] filterParsers;
       private MongoDBSettings settings;
 
-      public MongoPipelineQueryBuilder(IOptions<MongoDBSettings> options, IEnumerable<IProductFilterParser> parsers)
+      public MongoPipelineQueryBuilder(IOptions<MongoDBSettings> options, IEnumerable<IFilterParser<T>> parsers)
       {
          ArgumentNullException.ThrowIfNull(options, nameof(options));
          ArgumentNullException.ThrowIfNull(options.Value, nameof(options.Value));
@@ -23,17 +23,19 @@ namespace Core.SearchZone.Filters.QueryPipelineBuilders
          
          ArgumentNullException.ThrowIfNull(parsers, nameof(parsers));
          filterParsers = parsers.ToArray();
+         if (!filterParsers.Any())
+            throw new ArgumentException($"{nameof(parsers)} is empty");
       }
 
-      public string BuildPipelineQuery(ProductFilterPipeline pipeline)
+      public string BuildPipelineQuery(FilterPipeline<T> pipeline)
       {
          return BuildFiltersFromPipeline(pipeline);
       }
 
-      private string BuildFiltersFromPipeline(ProductFilterPipeline pipeline)
+      private string BuildFiltersFromPipeline(FilterPipeline<T> pipeline)
       {
-         IReadOnlyList<IProductFilter> filters = pipeline.Filters;
-         IProductFilterParser? suitableParser;
+         IReadOnlyList<T> filters = pipeline.Filters;
+         IFilterParser<T>? suitableParser;
          List<string> parsedFilters = new List<string>();
 
          foreach (var filter in filters)

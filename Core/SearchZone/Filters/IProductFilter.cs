@@ -9,6 +9,6 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone.Filters
 {
-   public interface IProductFilter { }
-
+   public interface IProductFilter : IFilter
+   { }
 }

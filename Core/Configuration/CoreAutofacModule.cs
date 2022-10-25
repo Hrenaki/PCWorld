@@ -22,17 +22,26 @@ namespace Core.Configuration
       {
          builder.RegisterType<HashService>().As<IHashService>().SingleInstance();
 
+         // Mongo services
          builder.RegisterType<MongoUserService>().As<IUserService>();
          builder.RegisterType<MongoUserRoleService>().As<IUserRoleService>();
          builder.RegisterType<MongoProductService>().As<IProductService>();
          
+         // Common services
          builder.RegisterType<UserAuthenticationService>().As<IUserAuthenticationService>();
 
-         builder.RegisterType<MongoPipelineQueryBuilder>().As<IPipelineQueryBuilder>();
-         builder.RegisterType<MongoProductPriceFilterParser>().As<IProductFilterParser>();
-         builder.RegisterType<MongoProductCategoryFilterParser>().As<IProductFilterParser>();
+         // Filter pipelines
+         builder.RegisterType<MongoPipelineQueryBuilder<IProductFilter>>().As<IPipelineQueryBuilder<IProductFilter>>();
+         builder.RegisterType<MongoPipelineQueryBuilder<ICategoryFilter>>().As<IPipelineQueryBuilder<ICategoryFilter>>();
 
+         // Filter parsers
+         builder.RegisterType<MongoProductPriceFilterParser>().AsImplementedInterfaces();
+         builder.RegisterType<MongoProductCategoryFilterParser>().AsImplementedInterfaces();
+         builder.RegisterType<MongoCategoryNameFilterParser>().AsImplementedInterfaces();
+
+         // Mongo serializers
          BsonSerializer.RegisterSerializer(new MongoShopEntitySerializer());
+         BsonSerializer.RegisterSerializer(new MongoProductCategoryEntitySerializer());
       }
    }
 }

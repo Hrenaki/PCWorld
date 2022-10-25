@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Data.Common;
 using MongoDB.Driver;
 using Data.Mongodb;
 using Microsoft.Extensions.Options;
@@ -15,13 +14,15 @@ using MongoDB.Bson;
 using Core.SearchZone.Filters;
 using Core.SearchZone.Filters.QueryPipelineBuilders;
 using MongoDB.Bson.Serialization;
+using Data.Common.Products;
+using Data.Mongodb.Products;
 
 namespace Core.SearchZone
 {
    public interface IProductService
    {
       public List<ProductEntity> GetProducts();
-      public List<ProductEntity> GetProducts(ProductFilterPipeline filter);
+      public List<ProductEntity> GetProducts(FilterPipeline<IProductFilter> filterPipeline);
    }
 
    internal class EfProductService : IProductService
@@ -41,7 +42,7 @@ namespace Core.SearchZone
          //                         .ToList();
       }
 
-      public List<ProductEntity> GetProducts(ProductFilterPipeline filter)
+      public List<ProductEntity> GetProducts(FilterPipeline<IProductFilter> filterPipeline)
       {
          return null;
          //return dbContext.Products.Include(pe => pe.Category)
@@ -56,13 +57,13 @@ namespace Core.SearchZone
    {
       private IMongoCollection<MongoProductEntity> products;
       private MongoDBSettings dbSettings;
-      private IPipelineQueryBuilder queryBuilder;
+      private IPipelineQueryBuilder<IProductFilter> queryBuilder;
 
       private BsonDocument[] includeShopsBson;
 
       public MongoProductService(MongoClient client,
                                  IOptions<MongoDBSettings> settings,
-                                 IPipelineQueryBuilder queryBuilder)
+                                 IPipelineQueryBuilder<IProductFilter> queryBuilder)
       {
          ArgumentNullException.ThrowIfNull(client, nameof(client));
          ArgumentNullException.ThrowIfNull(settings, nameof(settings));
@@ -121,24 +122,7 @@ namespace Core.SearchZone
                         .ToList();
       }
 
-      private IAggregateFluent<MongoProductEntity> IncludeShops(IAggregateFluent<MongoProductEntity> products)
-      {
-         return products.Unwind("Prices")
-                        .Lookup(dbSettings.ShopCollectionName, "Prices.ShopId", "_id", "Prices.Shop")
-                        .Unwind("Prices.Shop")
-                        .Group(new BsonDocument() { { "_id", "$_id"},
-                                                    { "root", new BsonDocument("$mergeObjects", "$$ROOT")},
-                                                    { "Prices", new BsonDocument("$push", "$Prices")} })
-                        .ReplaceRoot(u => new BsonDocument() { { "$mergeObjects", new BsonArray(new[] { "$root", "$$ROOT" }) } })
-                        .Project<MongoProductEntity>(new BsonDocument()
-                        {
-                           { "root", 0},
-                           { "Specifications", 0 },
-                           { "Prices.ShopId", 0 }
-                        });
-      }
-
-      public List<ProductEntity> GetProducts(ProductFilterPipeline filterPipeline)
+      public List<ProductEntity> GetProducts(FilterPipeline<IProductFilter> filterPipeline)
       {
          var queryStr = queryBuilder.BuildPipelineQuery(filterPipeline);
          var query = BsonSerializer.Deserialize<BsonDocument[]>(queryStr).ToList();

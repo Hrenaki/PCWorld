@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone.Filters.QueryPipelineBuilders
 {
-   public interface IPipelineQueryBuilder
+   public interface IPipelineQueryBuilder<T> where T : IFilter
    {
-      public string BuildPipelineQuery(ProductFilterPipeline pipeline);
+      public string BuildPipelineQuery(FilterPipeline<T> pipeline);
    }
 }

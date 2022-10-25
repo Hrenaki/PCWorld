@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone.Filters
 {
-   public class ProductFilterPipeline
+   public class FilterPipeline<T> where T : IFilter
    {
-      private List<IProductFilter> filters = new List<IProductFilter>();
-      public IReadOnlyList<IProductFilter> Filters => filters.AsReadOnly();
+      private List<T> filters = new List<T>();
+      public IReadOnlyList<T> Filters => filters.AsReadOnly();
 
-      public ProductFilterPipeline(params IProductFilter[] filters)
+      public FilterPipeline(params T[] filters)
       {
          if(filters.Length < 1 && filters.Any(filter => filter == null))
             throw new ArgumentException(nameof(filters));
@@ -19,7 +19,7 @@ namespace Core.SearchZone.Filters
          this.filters.AddRange(filters);
       }
 
-      public void AddFilter(IProductFilter filter)
+      public void AddFilter(T filter)
       {
          if(filter == null)
             throw new ArgumentNullException(nameof(filter));
@@ -28,7 +28,7 @@ namespace Core.SearchZone.Filters
             filters.Add(filter);
       }
 
-      public void RemoveFilter(IProductFilter filter)
+      public void RemoveFilter(T filter)
       {
          if(filter != null && filters.Contains(filter))
             filters.Remove(filter);

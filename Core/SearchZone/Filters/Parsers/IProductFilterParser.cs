@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace Core.SearchZone.Filters.Parsers
 {
-   public interface IProductFilterParser
+   public interface IFilterParser<T>
    {
-      public string Parse(IProductFilter filter);
-      public bool CanParse(IProductFilter filter);
+      public string Parse(T filter);
+      public bool CanParse(T filter);
    }
+
+   public interface IProductFilterParser : IFilterParser<IProductFilter>
+   { }
+
+   public interface ICategoryFilterParser : IFilterParser<ICategoryFilter>
+   { }
 }
