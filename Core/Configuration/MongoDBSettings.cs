@@ -16,6 +16,7 @@ namespace Core.Configuration
       public string UserRoleCollectionName { get; set; }
 
       public string ProductCollectionName { get; set; }
+      public string ProductCategoryCollectionName { get; set; }
       public string ShopCollectionName { get; set; }
    }
 }

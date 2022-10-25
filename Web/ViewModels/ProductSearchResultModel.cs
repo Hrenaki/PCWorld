@@ -1,4 +1,4 @@
-﻿using Data.Common;
+﻿using Data.Common.Products;
 using SharpCompress.Common;
 
 namespace Web.ViewModels
@@ -8,7 +8,7 @@ namespace Web.ViewModels
       public ProductEntity Entity { get; init; }
 
       public string Name => Entity.Name;
-      public string Category => Entity.Category;
+      public string Category => Entity.Category.Name;
       public decimal MinPrice => Entity.Prices.Min(info => info.Price);
       public int ShopCount => Entity.Prices.Count();
 

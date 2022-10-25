@@ -9,7 +9,7 @@ namespace Data.Common.Products
     public abstract class ProductEntity
     {
         public string Name { get; set; }
-        public ProductCategoryEntity CategoryEntity { get; set; }
+        public ProductCategoryEntity Category { get; set; }
         public PriceInfo[] Prices { get; set; }
     }
 

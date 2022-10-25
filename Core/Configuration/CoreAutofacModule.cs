@@ -26,6 +26,7 @@ namespace Core.Configuration
          builder.RegisterType<MongoUserService>().As<IUserService>();
          builder.RegisterType<MongoUserRoleService>().As<IUserRoleService>();
          builder.RegisterType<MongoProductService>().As<IProductService>();
+         builder.RegisterType<MongoCategoryService>().As<ICategoryService>();
          
          // Common services
          builder.RegisterType<UserAuthenticationService>().As<IUserAuthenticationService>();
