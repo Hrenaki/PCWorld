@@ -11,7 +11,7 @@ using Web.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add files to configuration
-builder.Configuration.AddJsonFile("appsettings.json");
+builder.Configuration.AddJsonFile("appsettings.json", false, true);
 
 // Add services
 builder.Services.AddRouting();
