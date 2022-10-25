@@ -1,5 +1,10 @@
-﻿@{
-		ViewData["modal"] = "exampleModal";
+﻿@using Web.Controllers;
+@using Web.Extensions;
+@{
+	ViewData["modal"] = "exampleModal";
+
+	var productListUrl = Url.Action(nameof(CatalogController.GetProducts),
+												ControllerExtensions.GetName<CatalogController>());
 }
 
 <!DOCTYPE html>
@@ -75,7 +80,7 @@
 		});
 
 		$('body').on('click', '#showProductsBtn', function() {
-			var url = "/products/list";
+			var url = "@productListUrl";
 			$.ajax({
 				url: url,
 				type: 'GET',

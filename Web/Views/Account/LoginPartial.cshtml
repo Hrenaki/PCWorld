@@ -1,10 +1,23 @@
-﻿<ul class="dropdown-menu dropdown-menu-dark">
+﻿@using Web.Controllers;
+@using Web.Extensions;
+@{
+	var registerUrl = Url.Action(nameof(AccountController.Register),
+											ControllerExtensions.GetName<AccountController>());
+	var loginUrl = Url.Action(nameof(AccountController.Login),
+											ControllerExtensions.GetName<AccountController>());
+	var loginActionUrl = Url.Action(nameof(AccountController.LoginAction),
+												ControllerExtensions.GetName<AccountController>());
+	var registerActionUrl = Url.Action(nameof(AccountController.RegisterAction),
+													ControllerExtensions.GetName<AccountController>());
+}
+
+<ul class="dropdown-menu dropdown-menu-dark">
 	<li><a class="dropdown-item" id="signin-btn">Sign in</a></li>
 	<li><a class="dropdown-item" id="register-btn">Sign out</a></li>
 </ul>
 
 <script>
-	var registerViewUrl = "Account/Register";
+	var registerViewUrl = "@registerUrl";
 
 	function setLoginHandler(modal) {
 		 var btn = 'signin-btn';
@@ -12,8 +25,8 @@
 		 var formbtn = 'submit-signin-form-btn';
 		 var form = "signin-form";
 
-		 var loginViewUrl = "Account/Login";
-		 var loginActionUrl = "Account/loginAction";
+		 var loginViewUrl = "@loginUrl";
+		 var loginActionUrl = "@loginActionUrl";
 
 		 setGetFormHandler(modal, btn, loginViewUrl);
 		 setGetFormHandler(modal, toregisterbtn, registerViewUrl);
@@ -26,7 +39,7 @@
 		 var formbtn = 'submit-register-form-btn';
 		 var form = "register-form";
 
-		 var actionUrl = "Account/registerAction";
+		 var actionUrl = "@registerActionUrl";
 
 		 setGetFormHandler(modal, btn, registerViewUrl);
 		 setSubmitFormHandler(modal, formbtn, form, actionUrl);
