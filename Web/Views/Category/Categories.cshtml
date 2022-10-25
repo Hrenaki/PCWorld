@@ -1,0 +1,13 @@
+﻿@model Web.ViewModels.CategorySearchModel
+
+<ul class="row justify-content-start align-items-start m-0 p-0">
+	@foreach(var categoryModel in Model.Categories)
+	{
+		<li class="card m-1 rounded-4 bg-light text-black" style="width: 10rem;">
+			<img src="~/Resources/CategoryImages/@string.Concat(categoryModel.Name, ".jpg")" height="120" width="120" class="card-img-top" alt="@categoryModel.Name">
+			<div class="card-body p-2">
+			  <p class="card-text text-center">@categoryModel.Name</p>
+			</div>
+		</li>
+	}
+</ul>

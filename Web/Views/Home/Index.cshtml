@@ -1,4 +1,10 @@
-﻿
+﻿@using Web.Controllers
+@using Web.Extensions
+@{
+   var categoryUrl = Url.Action(nameof(CategoryController.GetCategories), 
+                                ControllerExtensions.GetName<CategoryController>());
+}
+   
 <div class="container bg-light min-vh-100 rounded-4">
    <div>
       <div class="p-4 row align-items-start justify-content-between">
@@ -10,3 +16,13 @@
       </div>
    </div>
 </div>
+
+<script>
+   $.ajax({
+      url: "@categoryUrl",
+      type: 'GET',
+      success: function(data) {
+         $("#productSection").html(data);
+      }
+   })
+</script>
