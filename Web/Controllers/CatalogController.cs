@@ -20,10 +20,10 @@ namespace Web.Controllers
       [HttpGet("list")]
       public IActionResult GetProducts()
       {
-         ProductSearchResultModel rm = new ProductSearchResultModel("", 
+         ProductSearchResultModel rm = new ProductSearchResultModel("",
             productService.GetProducts().Select(pe => new SearchResultModel(pe)).ToList());
 
-         return PartialView("Catalog", rm);
+         return View("Catalog", rm);
       }
 
       [HttpGet("category/{name:maxlength(20)}")]
@@ -32,7 +32,7 @@ namespace Web.Controllers
          var pipeLine = new FilterPipeline<IProductFilter>(new ProductCategoryFilter() { CategoryName = name });
          ProductSearchResultModel rm = new ProductSearchResultModel("",
             productService.GetProducts(pipeLine).Select(pe => new SearchResultModel(pe)).ToList());
-         return PartialView("Catalog", rm);
+         return View("Catalog", rm);
       }
    }
 }
