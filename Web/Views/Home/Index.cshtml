@@ -5,16 +5,15 @@
                                 ControllerExtensions.GetName<CategoryController>());
 }
 
-<div class="container bg-light min-vh-100 rounded-4">
-   <div>
-      <div class="p-4 row align-items-start justify-content-between">
-         <div id="filterSection" class="col-2 min-vh-100 bg-dark rounded-4">
-            FILTER SECTION
+<div class="container min-vh-100">
+   <ul style="list-style: none;">
+      <li class="p-2">
+         <div id="categories" class="bg-light rounded-4 p-3">
+            <h3 class="mb-1 text-secondary-50">Categories</h3>
+            <div id="categories-body"></div>
          </div>
-         <div id="productSection" class="p-4 col-catalog min-vh-100 bg-dark rounded-4">
-         </div>
-      </div>
-   </div>
+      </li>
+   </ul>
 </div>
 
 <script>
@@ -22,7 +21,7 @@
       url: "@categoryUrl",
       type: 'GET',
       success: function(data) {
-         $("#productSection").html(data);
+         $("#categories-body").html(data);
       }
    })
 </script>
